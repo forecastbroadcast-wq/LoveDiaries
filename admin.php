@@ -23,12 +23,20 @@ if (isset($_GET['logout'])) {
     exit();
 }
 
+// Handle Booking Deletion (Remove completed/handled client)
+if (isset($_POST['delete_booking']) && isset($_SESSION['admin_logged_in'])) {
+    $booking_id = $_POST['booking_id'];
+    $del_stmt = $pdo->prepare("DELETE FROM bookings WHERE id = ?");
+    $del_stmt->execute([$booking_id]);
+    header("Location: admin.php");
+    exit();
+}
+
 // Handle Status Update (e.g., mark as 'Called' or 'Completed')
 if (isset($_POST['update_status']) && isset($_SESSION['admin_logged_in'])) {
     $booking_id = $_POST['booking_id'];
     $new_status = $_POST['status'];
     $update_stmt = $pdo->prepare("UPDATE bookings SET payment_status = ? WHERE id = ?");
-    // You can also change this to a specific status column if you prefer keeping payment_status separate
     header("Location: admin.php");
     exit();
 }
@@ -85,6 +93,7 @@ if (isset($_POST['update_status']) && isset($_SESSION['admin_logged_in'])) {
                                 <th class="p-4">Notes</th>
                                 <th class="p-4">Status</th>
                                 <th class="p-4">Date Booked</th>
+                                <th class="p-4 text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-800 text-sm">
@@ -95,7 +104,7 @@ if (isset($_POST['update_status']) && isset($_SESSION['admin_logged_in'])) {
                             if (empty($bookings)):
                             ?>
                                 <tr>
-                                    <td colspan="6" class="p-6 text-center text-slate-500">No bookings found yet.</td>
+                                    <td colspan="7" class="p-6 text-center text-slate-500">No bookings found yet.</td>
                                 </tr>
                             <?php else: foreach ($bookings as $row): ?>
                                 <tr class="hover:bg-slate-800/40 transition">
@@ -115,6 +124,14 @@ if (isset($_POST['update_status']) && isset($_SESSION['admin_logged_in'])) {
                                         </span>
                                     </td>
                                     <td class="p-4 text-xs text-slate-400"><?php echo htmlspecialchars($row['date_booked'] ?? ''); ?></td>
+                                    <td class="p-4 text-center">
+                                        <form method="POST" onsubmit="return confirm('Are you sure you want to remove this client from the queue?');">
+                                            <input type="hidden" name="booking_id" value="<?php echo $row['id']; ?>">
+                                            <button type="submit" name="delete_booking" class="bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white border border-rose-500/20 text-xs font-semibold px-3 py-1.5 rounded-lg transition">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </td>
                                 </tr>
                             <?php endforeach; endif; ?>
                         </tbody>
