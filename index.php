@@ -65,7 +65,7 @@
                 🇰🇪 Local (Ksh 100)
             </button>
             <button type="button" id="intlTab" onclick="setRegion('intl')" class="py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition">
-                🌍 International ($1 USD)
+                🌍 International (Ksh 150)
             </button>
         </div>
 
@@ -136,8 +136,8 @@
             } else {
                 intlTab.className = "py-2 text-xs font-bold rounded-lg bg-rose-600 text-white transition";
                 localTab.className = "py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition";
-                subText.textContent = "Book your loyalty test slot ($1 USD fee)";
-                submitBtn.textContent = "Pay $1 USD & Get Booking Number";
+                subText.textContent = "Book your loyalty test slot (Ksh 150 international fee)";
+                submitBtn.textContent = "Pay Ksh 150 & Get Booking Number";
             }
         }
 
@@ -174,9 +174,9 @@
             const clientPhone = document.getElementById('client_phone').value;
             const dummyEmail = clientPhone.replace(/[^0-9]/g, '') + "@lovediarries.ke"; 
 
-            // Set amount and currency based on toggle selection
-            let amount = currentRegion === 'local' ? 10000 : 100; // 10000 subunits for KES (100 Ksh), 100 subunits for USD ($1.00)
-            let currency = currentRegion === 'local' ? 'KES' : 'USD';
+            // Both options process securely in KES to prevent gateway currency mismatches
+            let amount = currentRegion === 'local' ? 10000 : 15000; // 10000 subunits = Ksh 100, 15000 subunits = Ksh 150
+            let currency = 'KES'; 
             let channels = currentRegion === 'local' ? ['mobile_money', 'card'] : ['card'];
 
             let handler = PaystackPop.setup({
