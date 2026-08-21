@@ -58,9 +58,20 @@
     </button>
 
     <div class="max-w-md w-full card-bg bg-slate-900/90 backdrop-blur-md border border-slate-800 rounded-2xl p-6 shadow-2xl my-auto relative z-10 transition-colors duration-300">
+        
+        <!-- Region / Currency Switcher Tabs -->
+        <div class="grid grid-cols-2 gap-2 bg-slate-950 p-1 rounded-xl border border-slate-800 mb-6">
+            <button type="button" id="localTab" onclick="setRegion('local')" class="py-2 text-xs font-bold rounded-lg bg-rose-600 text-white transition">
+                🇰🇪 Local (Ksh 100)
+            </button>
+            <button type="button" id="intlTab" onclick="setRegion('intl')" class="py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition">
+                🌍 International ($1 USD)
+            </button>
+        </div>
+
         <div class="text-center mb-6">
             <h1 class="text-2xl font-black text-rose-500">LOVE DIARIES</h1>
-            <p class="text-sm text-slate-400 mt-1">Book your loyalty test slot (Ksh 100 fee)</p>
+            <p id="subText" class="text-sm text-slate-400 mt-1">Book your loyalty test slot (Ksh 100 fee)</p>
         </div>
 
         <form id="bookingForm" class="space-y-4">
@@ -71,7 +82,7 @@
 
             <div>
                 <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Your Phone Number</label>
-                <input type="text" id="client_phone" placeholder="07XXXXXXXX" required class="w-full input-bg bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-rose-500 transition-colors duration-300">
+                <input type="text" id="client_phone" placeholder="07XXXXXXXX or international format" required class="w-full input-bg bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-rose-500 transition-colors duration-300">
             </div>
 
             <div>
@@ -89,13 +100,13 @@
                 <textarea id="notes" rows="2" class="w-full input-bg bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-rose-500 transition-colors duration-300"></textarea>
             </div>
 
-            <button type="submit" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 rounded-xl transition duration-200 shadow-lg shadow-rose-900/40">
+            <button type="submit" id="submitBtn" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 rounded-xl transition duration-200 shadow-lg shadow-rose-900/40">
                 Pay Ksh 100 & Get Booking Number
             </button>
         </form>
     </div>
 
-    <!-- Footer Links: WhatsApp & Staff Admin Portal -->
+    <!-- Footer Links -->
     <div class="mt-4 flex flex-col sm:flex-row items-center justify-center gap-3 relative z-10">
         <a href="https://wa.me/254790182919?text=Hello%20Love%20Diaries,%20I%20have%20an%20inquiry%20regarding%20booking%20a%20test." target="_blank" class="footer-btn inline-flex items-center gap-2 text-xs text-slate-400 bg-slate-900/90 backdrop-blur-sm border border-slate-800 hover:border-emerald-500/50 px-4 py-2 rounded-full transition duration-200">
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -108,6 +119,28 @@
     </div>
 
     <script>
+        let currentRegion = 'local';
+
+        function setRegion(region) {
+            currentRegion = region;
+            const localTab = document.getElementById('localTab');
+            const intlTab = document.getElementById('intlTab');
+            const subText = document.getElementById('subText');
+            const submitBtn = document.getElementById('submitBtn');
+
+            if (region === 'local') {
+                localTab.className = "py-2 text-xs font-bold rounded-lg bg-rose-600 text-white transition";
+                intlTab.className = "py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition";
+                subText.textContent = "Book your loyalty test slot (Ksh 100 fee)";
+                submitBtn.textContent = "Pay Ksh 100 & Get Booking Number";
+            } else {
+                intlTab.className = "py-2 text-xs font-bold rounded-lg bg-rose-600 text-white transition";
+                localTab.className = "py-2 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition";
+                subText.textContent = "Book your loyalty test slot ($1 USD fee)";
+                submitBtn.textContent = "Pay $1 USD & Get Booking Number";
+            }
+        }
+
         function toggleTheme() {
             const body = document.body;
             const themeIcon = document.getElementById('themeIcon');
@@ -126,7 +159,6 @@
             }
         }
 
-        // Check user saved preference on page load
         window.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('theme') === 'light') {
                 document.body.classList.add('light-mode');
@@ -140,14 +172,19 @@
             
             const clientName = document.getElementById('client_name').value;
             const clientPhone = document.getElementById('client_phone').value;
-            const dummyEmail = clientPhone + "@lovediarries.ke"; 
+            const dummyEmail = clientPhone.replace(/[^0-9]/g, '') + "@lovediarries.ke"; 
+
+            // Set amount and currency based on toggle selection
+            let amount = currentRegion === 'local' ? 10000 : 100; // 10000 subunits for KES (100 Ksh), 100 subunits for USD ($1.00)
+            let currency = currentRegion === 'local' ? 'KES' : 'USD';
+            let channels = currentRegion === 'local' ? ['mobile_money', 'card'] : ['card'];
 
             let handler = PaystackPop.setup({
                 key: 'pk_test_27ca215584161bd17591762b95f20fdc7cac9d13',
                 email: dummyEmail,
-                amount: 10000, // 10000 subunits = Ksh 100
-                currency: 'KES',
-                channels: ['mobile_money'],
+                amount: amount, 
+                currency: currency,
+                channels: channels,
                 metadata: {
                     custom_fields: [
                         { display_name: "Client Name", variable_name: "client_name", value: clientName },
