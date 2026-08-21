@@ -24,9 +24,15 @@ try {
             target_phone VARCHAR(50) NOT NULL,
             notes TEXT,
             status VARCHAR(20) DEFAULT 'Pending',
+            payment_status VARCHAR(50) DEFAULT 'Pending',
             paystack_reference VARCHAR(100),
             date_booked TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
+    ");
+
+    // Fallback in case the table already existed without the column
+    $pdo->exec("
+        ALTER TABLE bookings ADD COLUMN IF NOT EXISTS payment_status VARCHAR(50) DEFAULT 'Pending';
     ");
 
 } catch (PDOException $e) {
