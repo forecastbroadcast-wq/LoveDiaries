@@ -180,7 +180,7 @@
             let channels = currentRegion === 'local' ? ['mobile_money', 'card'] : ['card'];
 
             let handler = PaystackPop.setup({
-                key: 'pk_test_27ca215584161bd17591762b95f20fdc7cac9d13',
+                key: 'pk_live_952e2367041f2dcf97bc43be4f29de307bf1abad',
                 email: dummyEmail,
                 amount: amount, 
                 currency: currency,
