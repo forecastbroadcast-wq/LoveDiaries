@@ -21,7 +21,7 @@ curl_setopt_array($curl, [
     CURLOPT_SSL_VERIFYHOST => false,
     CURLOPT_HTTPHEADER => [
         "accept: application/json",
-        "authorization: Bearer sk_test_815a0df4177b0eaf40c82453653c9dd92eb8888b"
+        "authorization: Bearer sk_live_5636c4e4cd1761b8babd93c2ceae5a9005b88194"
     ],
 ]);
 
