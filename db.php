@@ -1,17 +1,35 @@
 <?php
-// db.php
-$host = getenv('DB_HOST') ?: 'localhost';
-$db   = getenv('DB_NAME') ?: 'love_diaries';
-$user = getenv('DB_USER') ?: 'root';
-$pass = getenv('DB_PASS') ?: '';
-$port = getenv('DB_PORT') ?: '5432';
+// Retrieve database credentials from Render environment variables
+$host = getenv('DB_HOST');
+$port = getenv('DB_PORT');
+$dbname = getenv('DB_NAME');
+$user = getenv('DB_USER');
+$password = getenv('DB_PASS');
 
 try {
-    $pdo = new PDO("pgsql:host=$host;port=$port;dbname=$db;user=$user;password=$pass", null, null, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    // Connect using PDO for PostgreSQL
+    $dsn = "pgsql:host=$host;port=$port;dbname=$dbname";
+    $pdo = new PDO($dsn, $user, $password, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
     ]);
-} catch (\PDOException $e) {
-    die("Database Connection Failed: " . $e->getMessage());
+
+    // Automatically create the bookings table if it doesn't exist yet
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS bookings (
+            id SERIAL PRIMARY KEY,
+            booking_code VARCHAR(50) NOT NULL,
+            client_name VARCHAR(100) NOT NULL,
+            client_phone VARCHAR(50) NOT NULL,
+            target_name VARCHAR(100) NOT NULL,
+            target_phone VARCHAR(50) NOT NULL,
+            notes TEXT,
+            status VARCHAR(20) DEFAULT 'Pending',
+            paystack_reference VARCHAR(100),
+            date_booked TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    ");
+
+} catch (PDOException $e) {
+    die("Database Connection & Setup Error: " . $e->getMessage());
 }
 ?>
