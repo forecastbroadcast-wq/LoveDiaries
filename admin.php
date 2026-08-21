@@ -99,22 +99,22 @@ if (isset($_POST['update_status']) && isset($_SESSION['admin_logged_in'])) {
                                 </tr>
                             <?php else: foreach ($bookings as $row): ?>
                                 <tr class="hover:bg-slate-800/40 transition">
-                                    <td class="p-4 font-mono font-bold text-rose-500"><?php echo htmlspecialchars($row['booking_code']); ?></td>
+                                    <td class="p-4 font-mono font-bold text-rose-500"><?php echo htmlspecialchars($row['booking_code'] ?? ''); ?></td>
                                     <td class="p-4">
-                                        <div class="font-semibold text-white"><?php echo htmlspecialchars($row['client_name']); ?></div>
-                                        <a href="tel:<?php echo htmlspecialchars($row['client_phone']); ?>" class="text-xs text-rose-400 hover:underline"><?php echo htmlspecialchars($row['client_phone']); ?></a>
+                                        <div class="font-semibold text-white"><?php echo htmlspecialchars($row['client_name'] ?? ''); ?></div>
+                                        <a href="tel:<?php echo htmlspecialchars($row['client_phone'] ?? ''); ?>" class="text-xs text-rose-400 hover:underline"><?php echo htmlspecialchars($row['client_phone'] ?? ''); ?></a>
                                     </td>
                                     <td class="p-4">
-                                        <div class="font-semibold text-white"><?php echo htmlspecialchars($row['target_name']); ?></div>
-                                        <div class="text-xs text-slate-400"><?php echo htmlspecialchars($row['target_phone']); ?></div>
+                                        <div class="font-semibold text-white"><?php echo htmlspecialchars($row['target_name'] ?? ''); ?></div>
+                                        <div class="text-xs text-slate-400"><?php echo htmlspecialchars($row['target_phone'] ?? ''); ?></div>
                                     </td>
-                                    <td class="p-4 text-xs text-slate-300 max-w-xs truncate"><?php echo htmlspecialchars($row['notes']); ?></td>
+                                    <td class="p-4 text-xs text-slate-300 max-w-xs truncate"><?php echo htmlspecialchars($row['notes'] ?? ''); ?></td>
                                     <td class="p-4">
                                         <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                                            <?php echo htmlspecialchars($row['payment_status']); ?>
+                                            <?php echo htmlspecialchars($row['payment_status'] ?? ''); ?>
                                         </span>
                                     </td>
-                                    <td class="p-4 text-xs text-slate-400"><?php echo htmlspecialchars($row['created_at']); ?></td>
+                                    <td class="p-4 text-xs text-slate-400"><?php echo htmlspecialchars($row['date_booked'] ?? ''); ?></td>
                                 </tr>
                             <?php endforeach; endif; ?>
                         </tbody>
